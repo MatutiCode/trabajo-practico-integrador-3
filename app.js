@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes)
-
+import eventRoutes from './src/routes/event.routes.js';
 // Acá van a ir las rutas: /api/auth, /api/users, /api/events, /api/categories
 
 const PORT = process.env.PORT || 3000;
