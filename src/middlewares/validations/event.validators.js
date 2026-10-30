@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { body, param } from "express-validator";
-import categoryModel from "../../models/category.model.js";
+import Category from "../../models/category.model.js";
 
 export const eventIdValidator = [
   param("id").isMongoId().withMessage("ID no valido"),
