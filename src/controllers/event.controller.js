@@ -80,3 +80,47 @@ export const getEventById = async (req, res) => {
     return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
   }
 };
+
+export const updateEvent = async (req, res) => {
+  try {
+    const { id, ...fields } = matchedData(req);
+
+    // Verificación de unicidad (ignorando el propio evento)
+    if (fields.title) {
+      const titleTaken = await Event.findOne({ title: fields.title, _id: { $ne: id } });
+      if (titleTaken) {
+        return res.status(400).json({ ok: false, message: 'Ya existe un evento con ese título' });
+      }
+    }
+
+    const event = req.event; // lo dejó cargado ownerOrAdminMiddleware
+    Object.assign(event, fields);
+    await event.save();
+
+    await event.populate([
+      { path: 'organizer', select: 'username email' },
+      { path: 'categories' },
+    ]);
+
+    return res.status(200).json({
+      ok: true,
+      message: 'Evento actualizado correctamente',
+      event,
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+  }
+};
+
+export const deleteEvent = async (req, res) => {
+  try {
+    await req.event.deleteOne(); 
+
+    return res.status(200).json({
+      ok: true,
+      message: 'Evento eliminado correctamente',
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+  }
+};
