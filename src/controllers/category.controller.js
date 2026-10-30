@@ -65,4 +65,28 @@ export const updateCategory = async (req, res) => {
     }   catch (error) {
         return res.status(500).json({ ok: false, message: 'error interno del servidor'});
     }
-}
+};
+
+export const deleteCategory = async (req, res) => {
+  try {
+    const { id } = matchedData(req);
+
+    // Verificación de existencia
+    const category = await Category.findById(id);
+    if (!category) {
+      return res.status(404).json({ ok: false, message: 'Categoría no encontrada' });
+    }
+
+    // Cascada: quitar la categoría del array categories de todos los eventos
+    await Event.updateMany({ categories: id }, { $pull: { categories: id } });
+
+    await category.deleteOne();
+
+    return res.status(200).json({
+      ok: true,
+      message: 'Categoría eliminada correctamente',
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+  }
+};
