@@ -1,28 +1,47 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const profileSchema = new mongoose.Schema(
   {
-    firstName: { type: String, required: true, trim: true, minlength: 2, maxlength: 50 },
-    lastName: { type: String, required: true, trim: true, minlength: 2, maxlength: 50 },
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
     birthDate: { type: Date },
     phone: { type: String },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true, trim: true, minlength: 3, maxlength: 20 },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 20,
+    },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email no válido'],
+      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email no válido"],
     },
     password: { type: String, required: true },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
     profile: { type: profileSchema, required: true },
     deletedAt: { type: Date, default: null },
   },
@@ -32,20 +51,19 @@ const userSchema = new mongoose.Schema(
     toJSON: {
       virtuals: true,
       transform: (doc, ret) => {
-        delete ret.password; // nunca devolver el hash
+        delete ret.password;
         delete ret.id;
         return ret;
       },
     },
     toObject: { virtuals: true },
-  }
+  },
 );
 
-// Virtual populate: eventos que organiza el usuario
-userSchema.virtual('events', {
-  ref: 'Event',
-  localField: '_id',
-  foreignField: 'organizer',
+userSchema.virtual("events", {
+  ref: "Event",
+  localField: "_id",
+  foreignField: "organizer",
 });
 
-export default mongoose.model('User', userSchema);
+export default mongoose.model("User", userSchema);

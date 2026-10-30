@@ -13,8 +13,7 @@ import {
 } from "../middlewares/validations/event.validators.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-// Agrega esta línea arriba de todo en event.routes.js (ajusta la ruta según dónde esté ubicado tu archivo de middlewares)
-import { ownerOrAdminMiddleware } from '../middlewares/ownerOrAdmin.middleware.js';
+import { ownerOrAdminMiddleware } from "../middlewares/ownerOrAdmin.middleware.js";
 
 const router = Router();
 

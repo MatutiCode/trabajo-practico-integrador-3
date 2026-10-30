@@ -1,17 +1,42 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const locationSchema = new mongoose.Schema(
   {
-    venue: { type: String, required: true, trim: true, minlength: 3, maxlength: 100 },
-    address: { type: String, required: true, trim: true, minlength: 5, maxlength: 150 },
-    city: { type: String, required: true, trim: true, minlength: 2, maxlength: 50 },
+    venue: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 100,
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 5,
+      maxlength: 150,
+    },
+    city: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const eventSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, unique: true, trim: true, minlength: 3, maxlength: 150 },
+    title: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 150,
+    },
     description: { type: String, required: true, trim: true, minlength: 20 },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
@@ -19,19 +44,26 @@ const eventSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 1,
-      validate: { validator: Number.isInteger, message: 'La capacidad debe ser un entero' },
+      validate: {
+        validator: Number.isInteger,
+        message: "La capacidad debe ser un entero",
+      },
     },
     price: { type: Number, min: 0, default: 0 },
     status: {
       type: String,
-      enum: ['scheduled', 'cancelled', 'finished'],
-      default: 'scheduled',
+      enum: ["scheduled", "cancelled", "finished"],
+      default: "scheduled",
     },
     location: { type: locationSchema, required: true },
-    organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+    organizer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: true, versionKey: false },
 );
 
-export default mongoose.model('Event', eventSchema);
+export default mongoose.model("Event", eventSchema);

@@ -1,15 +1,17 @@
-import { matchedData } from 'express-validator';
-import User from '../models/user.model.js';
-import Event from '../models/event.model.js';
+import { matchedData } from "express-validator";
+import User from "../models/user.model.js";
+import Event from "../models/event.model.js";
 
 export const getUsers = async (req, res) => {
   try {
     // Solo usuarios activos
-    const users = await User.find({ deletedAt: null }).populate('events');
+    const users = await User.find({ deletedAt: null }).populate("events");
 
     return res.status(200).json({ ok: true, users });
   } catch (error) {
-    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+    return res
+      .status(500)
+      .json({ ok: false, message: "Error interno del servidor" });
   }
 };
 
@@ -17,14 +19,20 @@ export const getUserById = async (req, res) => {
   try {
     const { id } = matchedData(req);
 
-    const user = await User.findOne({ _id: id, deletedAt: null }).populate('events');
+    const user = await User.findOne({ _id: id, deletedAt: null }).populate(
+      "events",
+    );
     if (!user) {
-      return res.status(404).json({ ok: false, message: 'Usuario no encontrado' });
+      return res
+        .status(404)
+        .json({ ok: false, message: "Usuario no encontrado" });
     }
 
     return res.status(200).json({ ok: true, user });
   } catch (error) {
-    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+    return res
+      .status(500)
+      .json({ ok: false, message: "Error interno del servidor" });
   }
 };
 
@@ -35,10 +43,11 @@ export const updateUser = async (req, res) => {
     // Verificación de existencia
     const user = await User.findOne({ _id: id, deletedAt: null });
     if (!user) {
-      return res.status(404).json({ ok: false, message: 'Usuario no encontrado' });
+      return res
+        .status(404)
+        .json({ ok: false, message: "Usuario no encontrado" });
     }
 
-    // Verificación de unicidad (ignorando al propio usuario)
     if (fields.username || fields.email) {
       const conditions = [];
       if (fields.username) conditions.push({ username: fields.username });
@@ -48,7 +57,7 @@ export const updateUser = async (req, res) => {
       if (taken) {
         return res.status(400).json({
           ok: false,
-          message: 'El username o el email ya están en uso',
+          message: "El username o el email ya están en uso",
         });
       }
     }
@@ -59,11 +68,13 @@ export const updateUser = async (req, res) => {
 
     return res.status(200).json({
       ok: true,
-      message: 'Usuario actualizado correctamente',
+      message: "Usuario actualizado correctamente",
       user,
     });
   } catch (error) {
-    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+    return res
+      .status(500)
+      .json({ ok: false, message: "Error interno del servidor" });
   }
 };
 
@@ -75,27 +86,30 @@ export const deleteUser = async (req, res) => {
     if (req.user._id.equals(id)) {
       return res.status(400).json({
         ok: false,
-        message: 'No podés eliminar tu propio usuario',
+        message: "No podés eliminar tu propio usuario",
       });
     }
 
     const user = await User.findOne({ _id: id, deletedAt: null });
     if (!user) {
-      return res.status(404).json({ ok: false, message: 'Usuario no encontrado' });
+      return res
+        .status(404)
+        .json({ ok: false, message: "Usuario no encontrado" });
     }
 
     // Eliminación lógica
     user.deletedAt = new Date();
     await user.save();
 
-    // Cascada: eliminar los eventos que organizó
     await Event.deleteMany({ organizer: id });
 
     return res.status(200).json({
       ok: true,
-      message: 'Usuario eliminado correctamente junto con sus eventos',
+      message: "Usuario eliminado correctamente junto con sus eventos",
     });
   } catch (error) {
-    return res.status(500).json({ ok: false, message: 'Error interno del servidor' });
+    return res
+      .status(500)
+      .json({ ok: false, message: "Error interno del servidor" });
   }
 };
